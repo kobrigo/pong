@@ -1,0 +1,1 @@
+var lobbyModule = angular.module('lobby',[]);

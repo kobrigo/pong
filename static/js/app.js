@@ -1,22 +1,9 @@
-$(document).ready(function() {
+var appModule = angular.module('app', ['game', 'lobby', 'common']);
 
-    function GameConsole(){
-        this.consoleWindow = $('.game-console');
 
-        this.log = function(message) {
-            this.consoleWindow.append('<div class="console-message">' + message + '</div>');
-            this.consoleWindow.scrollTop(this.consoleWindow[0].scrollHeight);
-        }
-    }
-
-    var gameConsole = new GameConsole();
-
-    var socket = io.connect('http://localhost:3001');
-    socket.on('news', function(data) {
-
+appModule.run(['game-console-service', '$rootScope', 'socket', function(gameConsole, $rootscope, appSocket){
+    appSocket.on('news', function(data) {
         gameConsole.log(data.theNews);
-        socket.emit('client-message', { my: 'data' });
+        appSocket.emit('client-message', {data:'this is eyals data'});
     });
-
-
-});
+}]);
