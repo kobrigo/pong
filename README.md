@@ -1,4 +1,4 @@
 pong
 ====
 
-a simple implementation of the pong game to play with nodejs web sockets
+A simple implementation of the pong game. I created this for learning purposes, basically so I can play with nodejs web sockets :-)

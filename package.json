@@ -1,0 +1,12 @@
+{
+	"name": "TanksSimpleWebServer",
+	"version": "0.0.1",
+	"description": "Just a simple web server to serve the tanks game",
+	"devDependencies": {
+		"express": ">= 2.0.0 < 3.0.0",
+		"socket.io": ">= 0.9"
+	},
+	"scripts": {
+		"start": "cd ./server; node ./webServer.js"
+	}
+}

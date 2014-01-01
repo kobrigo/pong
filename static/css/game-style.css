@@ -1,0 +1,49 @@
+.game-container {
+    position: absolute;
+    top: 50%;
+    left: 30px;
+    right: 30px;
+    bottom: 160px;
+    background: black;
+}
+
+.left-player, .right-player {
+    position: absolute;
+    top: 20px;
+    width: 20px;
+    height: 100px;
+    background: white;
+}
+
+.left-player {
+    left: 20px;
+}
+
+.right-player {
+    right: 20px;
+}
+
+.net {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    width: 20px;
+    left: 50%;
+    background: white;
+}
+
+.game-console {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    height: 100px;
+    bottom: 30px;
+    background: black;
+    color: lawngreen;
+    overflow: auto;
+}
+
+.console-message {
+    padding: 0;
+    margin: 0;
+}
