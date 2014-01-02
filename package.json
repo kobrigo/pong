@@ -4,7 +4,8 @@
 	"description": "Just a simple web server to serve the tanks game",
 	"devDependencies": {
 		"express": ">= 2.0.0 < 3.0.0",
-		"socket.io": ">= 0.9"
+		"socket.io": ">= 0.9",
+      "lodash-node" : "2.4.1"
 	},
 	"scripts": {
 		"start": "cd ./server; node ./webServer.js"

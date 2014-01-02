@@ -1,4 +1,4 @@
-var gameModule = angular.module('game',[]);
+var gameModule = angular.module('game',['common']);
 
 
 

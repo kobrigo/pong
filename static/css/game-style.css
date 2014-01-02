@@ -1,9 +1,18 @@
-.game-container {
+.main-view-container {
     position: absolute;
     top: 30px;
     left: 30px;
     right: 30px;
     bottom: 160px;
+    background: gray;
+}
+
+.game-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: black;
 }
 
@@ -46,4 +55,22 @@
 .console-message {
     padding: 0;
     margin: 0;
+}
+
+.login-root {
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background: deepskyblue;
+}
+
+.lobby-root {
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background: firebrick;
 }
