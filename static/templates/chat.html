@@ -1,0 +1,15 @@
+<div class="chat-root">
+   <div class="chat-messages-panel panel panel-primary">
+      <div class="panel-heading">The Lobby</div>
+      <div class="chat-messages panel-body">
+         <div class="chat-message" ng-repeat="message in chatMessages track by message.id">{{message.nickname}}: {{message.message}}</div>
+      </div>
+   </div>
+
+   <div class="input-group">
+      <input type="text" class="form-control" ng-model="nextMessage">
+      <span class="input-group-btn">
+         <button class="btn btn-default" type="button" ng-click="sendChatMessage()">Go!</button>
+      </span>
+   </div>
+</div>

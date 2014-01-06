@@ -30,12 +30,13 @@ appWS.use(function(req, res, next) {
 appWS.use("/", express.static(pathToServe));
 appWS.listen(consts.webServerPort);
 
-var pendingClients = {};
-var clientsInLobby = {};
-var nickNamesToClient = {};
+var pendingPlayer = {};
+var playersInLobby = {};
+var nickNamesToPlayer = {};
 var games = [];
+var chatMessageId = 0;
 
-function Client(socket) {
+function Player(socket) {
    this.socket = socket;
    this.nickname = null;
 }
@@ -45,14 +46,14 @@ function Game(settings) {
 }
 
 function broadcast(messageId, message) {
-   _.forEach(clientsInLobby, function(client) {
-      client.socket.emit(messageId, message)
+   _.forEach(playersInLobby, function(player) {
+      player.socket.emit(messageId, message)
    })
 }
 
-function getAllPlayersData(){
+function getAllPlayersData() {
    var playersData = [];
-   _.forOwn(nickNamesToClient, function(client) {
+   _.forOwn(nickNamesToPlayer, function(client) {
       playersData.push({nickname: client.nickname})
    });
 
@@ -61,34 +62,35 @@ function getAllPlayersData(){
 
 io.sockets.on('connection', function(socket) {
 
-   var newClient = new Client(socket);
-   pendingClients[socket.id] = newClient;
+   var newPlayer = new Player(socket);
+   pendingPlayer[socket.id] = newPlayer;
 
    socket.on('login', function(data) {
-      client = pendingClients[socket.id];
-      if (client) {
+      player = pendingPlayer[socket.id];
+      if (player) {
          //save the nick name of the client and add it to the list of player waiting in the lobby
-         client.nickname = data.nickname;
+         player.nickname = data.nickname;
 
-         if (nickNamesToClient[client.nickname]) {
+         if (nickNamesToPlayer[player.nickname]) {
             //this mean that this nick name is already taken
-            client.socket.emit('login-error', {reason: 'Nickname is already taken.'});
+            player.socket.emit('login-error', {reason: 'Nickname is already taken.'});
             return;
          }
 
-         //move the client from the pending clients list to the lobby;
-         clientsInLobby[socket.id] = client;
-         nickNamesToClient[client.nickname] = client;
-         delete pendingClients[socket.id];
+         //move the player from the pending players list to the lobby;
+         playersInLobby[socket.id] = player;
+         nickNamesToPlayer[player.nickname] = player;
+         delete pendingPlayer[socket.id];
 
-         //let all the other clients in the lobby that there is a new player by sending the the updated
+         //let all the other players in the lobby that there is a new player by sending the the updated
          //list of players.
+         broadcast('player-joined', player.nickname);
          var playersData = getAllPlayersData();
          broadcast('players', playersData);
          socket.emit('login-ok');
 
       } else {
-         console.log("could not find the socket.id:" + socket.id + "in the list of pending clients.");
+         console.log("could not find the socket.id:" + socket.id + "in the list of pending players.");
       }
    });
 
@@ -98,18 +100,21 @@ io.sockets.on('connection', function(socket) {
    });
 
    socket.on('disconnect', function() {
-      console.log('disconnect from client id: ' + socket.id);
+      console.log('disconnected from player id: ' + socket.id);
       //TODO:
-      //1. if there is a game with this client find close the game deleting the game instance
+      //1. if there is a game with this player find close the game deleting the game instance
       //2. move the player that is still connected to the lobby.
 
-      // handle the disconnection from this client
-      delete pendingClients[socket.id];
+      // handle the disconnection from this player
+      delete pendingPlayer[socket.id];
 
-      if(clientsInLobby[socket.id]){
-         console.log('client nickname was: ' + clientsInLobby[socket.id].nickname);
-         delete nickNamesToClient[clientsInLobby[socket.id].nickname]
-         delete clientsInLobby[socket.id];
+      if (playersInLobby[socket.id]) {
+         var player = playersInLobby[socket.id];
+         console.log('player nickname was: ' + player.nickname);
+         delete nickNamesToPlayer[player.nickname];
+         delete playersInLobby[socket.id];
+
+         broadcast('player-left', player.nickname);
       }
 
       //update all the player that a player has left (those that are in the lobby)
@@ -117,13 +122,19 @@ io.sockets.on('connection', function(socket) {
       broadcast('players', playersData);
    });
 
+   socket.on('player-send-chat-message', function(message) {
+      var player = playersInLobby[socket.id];
+      broadcast('player-chat-message', {nickname: player.nickname, message: message, id: chatMessageId});
+      chatMessageId++;
+   });
+
    socket.on('start-game', function(data) {
       //TODO:
       //1. find the player that we want to play with
-      //2find the the socket this message has come from
-      //remove them from the hash of players in the lobby
-      //Create a game instance with these tow players.
-      //Add the Game instance to the active list of games that will be shown in the lobby.
+      //2. find the the socket this message has come from
+      //3. remove them from the hash of players in the lobby
+      //4. Create a game instance with these tow players.
+      //5. Add the Game instance to the active list of games that will be shown in the lobby.
    });
 
    socket.on('client-message', function(data) {

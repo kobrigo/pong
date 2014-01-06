@@ -1,60 +1,59 @@
 .main-view-container {
-    position: absolute;
-    top: 30px;
-    left: 30px;
-    right: 30px;
-    bottom: 160px;
-    background: gray;
+   position: absolute;
+   top: 30px;
+   left: 30px;
+   right: 30px;
+   bottom: 160px;
 }
 
 .game-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: black;
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background: black;
 }
 
 .left-player, .right-player {
-    position: absolute;
-    top: 20px;
-    width: 20px;
-    height: 100px;
-    background: white;
+   position: absolute;
+   top: 20px;
+   width: 20px;
+   height: 100px;
+   background: white;
 }
 
 .left-player {
-    left: 20px;
+   left: 20px;
 }
 
 .right-player {
-    right: 20px;
+   right: 20px;
 }
 
 .net {
-    position: absolute;
-    top: 10px;
-    bottom: 10px;
-    width: 20px;
-    left: 50%;
-    background: white;
+   position: absolute;
+   top: 10px;
+   bottom: 10px;
+   width: 20px;
+   left: 50%;
+   background: white;
 }
 
 .game-console {
-    position: absolute;
-    left: 30px;
-    right: 30px;
-    height: 100px;
-    bottom: 30px;
-    background: black;
-    color: lawngreen;
-    overflow: auto;
+   position: absolute;
+   left: 30px;
+   right: 30px;
+   height: 100px;
+   bottom: 30px;
+   background: black;
+   color: lawngreen;
+   overflow: auto;
 }
 
 .console-message {
-    padding: 0;
-    margin: 0;
+   padding: 0;
+   margin: 0;
 }
 
 .login-root {
@@ -72,5 +71,53 @@
    left: 0;
    right: 0;
    bottom: 0;
-   background: firebrick;
 }
+
+.lobby-root .right-pane {
+   position: absolute;
+   top: 0;
+   right: 0;
+   bottom: 0;
+   left: 70%
+}
+
+.lobby-root .left-pane {
+   position: absolute;
+   top: 0;
+   left: 0;
+   bottom: 0;
+   right: 33%;
+}
+
+.chat-root {
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+}
+
+.chat-messages {
+   position: absolute;
+   top: 30px;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   overflow: auto;
+}
+.chat-messages-panel {
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 45px;
+   margin: 0;
+}
+
+.chat-root .input-group {
+   position: absolute;
+   left: 0;
+   right: 0;
+   bottom: 0;
+}
+

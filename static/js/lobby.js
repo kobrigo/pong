@@ -3,30 +3,49 @@ var lobbyModule = angular.module('lobby', ['common']);
 lobbyModule.controller('lobbyController', ['$scope', '$location', 'game-console-service', 'socket', function($scope, $location, gameConsole, socket) {
    gameConsole.log('opened the lobby screen');
 
-   $scope.players = [
-      {nickname: 'eyal'},
-      {nickname: 'nurit'}
-   ];
+   $scope.players = [];
+   $scope.chatMessages = [];
+   $scope.nextMessage = "";
 
    $scope.createGame = function() {
       //open the game screen
       $location.path('game');
    };
 
-   function updatePlayers(data){
+   $scope.sendChatMessage = function() {
+      socket.emit('player-send-chat-message', $scope.nextMessage);
+   };
+
+   $scope.exit = function() {
+
+   };
+
+   function updatePlayers(data) {
       $scope.players = data;
    }
 
-   function handlePlayers(data){
+   function handlePlayers(data) {
       updatePlayers(data);
    }
 
-   function handleEnterLobbyOk(data){
+   function handleEnterLobbyOk(data) {
       updatePlayers(data);
    }
 
-   function handleExitLobbyOk(){
+   function handleExitLobbyOk() {
 
+   }
+
+   function handlePlayerLeft(playerNickName) {
+      gameConsole.log(playerNickName + " has left. :-(");
+   }
+
+   function handlePlayerJoined(playerNickName) {
+      gameConsole.log(playerNickName + " has joined. :-)");
+   }
+
+   function handlePlayerChatMessage(chatMessageData) {
+      $scope.chatMessages.push(chatMessageData);
    }
 
    $scope.logout = function() {
@@ -37,14 +56,34 @@ lobbyModule.controller('lobbyController', ['$scope', '$location', 'game-console-
    socket.emit('enter-lobby');
    socket.on('enter-lobby-ok', handleEnterLobbyOk);
    socket.on('players', handlePlayers);
+   socket.on('player-left', handlePlayerLeft);
+   socket.on('player-joined', handlePlayerJoined);
+   socket.on('player-chat-message', handlePlayerChatMessage);
+
 
    $scope.$on('$destroy', function() {
       // say goodbye to your controller here
       // release resources, cancel request...
       socket.off('exit-lobby-ok', handleExitLobbyOk);
       socket.off('enter-lobby-ok', handleEnterLobbyOk);
-      socket.off('enter-lobby-ok', handlePlayers);
+      socket.off('players', handlePlayers);
+      socket.off('player-left', handlePlayerLeft);
+      socket.off('player-joined', handlePlayerJoined);
    })
 }]);
+
+lobbyModule.directive('chatScreen', function() {
+   return {
+      replace: true,
+      restrict: 'E',
+      templateUrl: 'templates/chat.html',
+      link: function($scope, elm) {
+         //define a watch so we can scroll the messages down as they come:
+         $scope.$watchCollection('chatMessages', function() {
+            elm.scrollTop(elm[0].scrollHeight);
+         });
+      }
+   }
+});
 
 
