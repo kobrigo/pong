@@ -62,7 +62,10 @@
    left: 0;
    right: 0;
    bottom: 0;
-   background: deepskyblue;
+}
+
+.login-root .input-group {
+   max-width: 300px;
 }
 
 .lobby-root {
@@ -121,3 +124,32 @@
    bottom: 0;
 }
 
+.players-panel {
+   position: absolute;
+   left: 0;
+   right: 0;
+   bottom: 45px;
+   top: 0;
+   margin: 0;
+}
+
+.actions-toolbar {
+   position: absolute;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   margin: 0;
+}
+
+.actions-toolbar button {
+   margin: 0;
+}
+
+.send-button {
+   padding: 2px 8px;
+}
+
+.send-button .glyphicon {
+   font-size: 21px;
+   left: -1px;
+}

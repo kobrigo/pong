@@ -12,7 +12,7 @@ loginModule.controller('loginController', ['$scope', '$location', 'game-console-
       gameConsole.log("Got login error. Reason: " + data.reason);
    }
 
-   $scope.nickname = "Enter your nick name here";
+   $scope.nickname = "";
 
    $scope.login = function() {
       socket.emit('login', {nickname: $scope.nickname});

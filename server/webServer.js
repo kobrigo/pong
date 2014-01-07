@@ -11,24 +11,20 @@ var socketIo = require('socket.io');
 var _ = require('lodash-node');
 
 var consts = {
-   webServerPort: 9022,
-   webSocketPort: 3001
+   webServerPort: 9022
 };
-
-//create the listening to io socket connections.
-console.log("Listening for socket.io connections on port:" + consts.webSocketPort);
-var io = socketIo.listen(consts.webSocketPort);
 
 var pathToServe = path.normalize(path.join(__dirname, './../static/'));
 var appWS = express();
-require('http').createServer(appWS);
+var server = require('http').createServer(appWS);
+var io = socketIo.listen(server);
 console.log("Serving: " + pathToServe + " on port:" + consts.webServerPort);
 appWS.use(function(req, res, next) {
    res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
    next();
 });
 appWS.use("/", express.static(pathToServe));
-appWS.listen(consts.webServerPort);
+server.listen(consts.webServerPort);
 
 var pendingPlayer = {};
 var playersInLobby = {};

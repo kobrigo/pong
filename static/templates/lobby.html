@@ -1,15 +1,23 @@
 <div class="lobby-root" ng-controller="lobbyController">
 
    <div class="right-pane">
-      <button ng-click="createGame()" class="btn btn-success navbar-btn">Join Game</button>
-      <button ng-click="logout()" class="btn btn-default navbar-btn" >Logout</button>
 
-      <ul class="list-of-players list-group">
-         <li class="player-list-item list-group-item"
-             ng-repeat="player in players">
-            {{player.nickname}}
-         </li>
-      </ul>
+      <div class="players-panel panel panel-primary">
+         <div class="panel-heading">Players Connected</div>
+
+         <ul class="list-of-players list-group">
+            <li class="player-list-item list-group-item"
+                ng-repeat="player in players">
+               {{player.nickname}}
+            </li>
+         </ul>
+
+      </div>
+
+      <div class="actions-toolbar">
+         <button ng-click="createGame()" class="btn btn-success navbar-btn">Join Game</button>
+         <button ng-click="logout()" class="btn btn-default navbar-btn">Logout</button>
+      </div>
    </div>
 
    <div class="left-pane">

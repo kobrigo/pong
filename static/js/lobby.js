@@ -14,6 +14,7 @@ lobbyModule.controller('lobbyController', ['$scope', '$location', 'game-console-
 
    $scope.sendChatMessage = function() {
       socket.emit('player-send-chat-message', $scope.nextMessage);
+      $scope.nextMessage = "";
    };
 
    $scope.exit = function() {

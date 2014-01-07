@@ -1,6 +1,8 @@
 var commonModule = angular.module('common', []);
 
-commonModule.constant('commonConsts', { socketUrl: 'http://localhost:3001'});
+commonModule.constant('commonConsts', {
+   socketUrl: 'http://localhost:3001'
+});
 
 commonModule.controller('gameConsoleController', ['$scope', 'game-console-service', function($scope, gameConsoleService) {
    $scope.consoleService = gameConsoleService;
@@ -47,8 +49,9 @@ commonModule.factory('game-console-service', function() {
    return new GameConsoleService();
 });
 
-commonModule.factory('socket', ['commonConsts', '$rootScope', function(commonConsts, $rootScope) {
-   var socket = io.connect(commonConsts.socketUrl);
+commonModule.factory('socket', ['commonConsts', '$rootScope', '$location', function(commonConsts, $rootScope, $location) {
+   var host = $location.host();
+   var socket = io.connect("http://" + host);
    return {
       on: function(eventName, callback) {
          socket.on(eventName, function() {
@@ -74,6 +77,21 @@ commonModule.factory('socket', ['commonConsts', '$rootScope', function(commonCon
    };
 }]);
 
+
+// This directive allows you to handle the pressing of enter on an element when it is in focus
+commonModule.directive('ngEnter', function() {
+   return function(scope, element, attrs) {
+      element.bind("keydown keypress", function(event) {
+         if(event.which === 13) {
+            scope.$apply(function(){
+               scope.$eval(attrs.ngEnter);
+            });
+
+            event.preventDefault();
+         }
+      });
+   };
+});
 
 
 

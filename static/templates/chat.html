@@ -7,9 +7,11 @@
    </div>
 
    <div class="input-group">
-      <input type="text" class="form-control" ng-model="nextMessage">
+      <input type="text" class="form-control" ng-model="nextMessage" ng-enter="sendChatMessage()">
       <span class="input-group-btn">
-         <button class="btn btn-default" type="button" ng-click="sendChatMessage()">Go!</button>
+         <button class="send-button btn btn-default" type="button" ng-click="sendChatMessage()">
+            <span class="glyphicon glyphicon-send"></span>
+         </button>
       </span>
    </div>
 </div>
