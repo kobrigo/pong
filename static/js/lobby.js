@@ -1,11 +1,13 @@
 var lobbyModule = angular.module('lobby', ['common']);
 
-lobbyModule.controller('lobbyController', ['$scope', '$location', 'game-console-service', 'socket', function($scope, $location, gameConsole, socket) {
+lobbyModule.controller('lobbyController', ['$scope', '$location', 'game-console-service', 'socket', 'me', function($scope, $location, gameConsole, socket, me) {
    gameConsole.log('opened the lobby screen');
 
    $scope.players = [];
    $scope.chatMessages = [];
    $scope.nextMessage = "";
+   $scope.selectedPlayer = null;
+   $scope.myNickname = me.nickname;
 
    $scope.createGame = function() {
       //open the game screen
@@ -15,6 +17,18 @@ lobbyModule.controller('lobbyController', ['$scope', '$location', 'game-console-
    $scope.sendChatMessage = function() {
       socket.emit('player-send-chat-message', $scope.nextMessage);
       $scope.nextMessage = "";
+   };
+
+   $scope.handlePlayerSelected = function(selectedPlayer) {
+      if (selectedPlayer.nickname === me.nickname) {
+         alert("you cannot select yourself as the player to play against");
+         return;
+      } else if (selectedPlayer === $scope.selectedPlayer){
+         $scope.selectedPlayer = null;
+         return;
+      }
+
+      $scope.selectedPlayer = selectedPlayer;
    };
 
    $scope.exit = function() {
@@ -34,7 +48,7 @@ lobbyModule.controller('lobbyController', ['$scope', '$location', 'game-console-
    }
 
    function handleExitLobbyOk() {
-
+      $location.path('login');
    }
 
    function handlePlayerLeft(playerNickName) {

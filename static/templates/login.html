@@ -1,14 +1,18 @@
 <div class="login-root" ng-controller="loginController">
 
-   <div class="jumbotron">
-      <h1>Hello to Pong Game</h1>
+	<div class="jumbotron">
+		<h1>Welcome to Pong Game</h1>
 
-      <p>please select a nick name and press the login button to connect.</p>
+		<p>please select a nick name and press the login button to connect.</p>
 
-      <div class="input-group">
-         <input type="text" class="form-control" ng-model="nickname" placeholder="Enter Your nick name here">
-         <span class="input-group-btn"><button class="btn btn-default btn-primary" type="button" ng-click="login()">Login</button></span>
-      </div>
-      <!-- /input-group -->
-   </div>
+		<div class="input-group">
+			<input type="text" class="form-control" ng-model="nickname" placeholder="Enter Your nick name here"
+					 ng-enter="login()">
+			<span class="input-group-btn">
+				<button class="btn btn-default btn-primary" type="button" ng-click="login()">Login
+				</button>
+			</span>
+		</div>
+		<!-- /input-group -->
+	</div>
 </div>

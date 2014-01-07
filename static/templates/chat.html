@@ -1,17 +1,19 @@
 <div class="chat-root">
-   <div class="chat-messages-panel panel panel-primary">
-      <div class="panel-heading">The Lobby</div>
-      <div class="chat-messages panel-body">
-         <div class="chat-message" ng-repeat="message in chatMessages track by message.id">{{message.nickname}}: {{message.message}}</div>
-      </div>
-   </div>
+	<div class="chat-messages-panel panel panel-primary">
+		<div class="panel-heading">Chat Messages</div>
+		<div class="chat-messages panel-body">
+			<div class="chat-message"
+				  ng-repeat="message in chatMessages track by message.id">{{message.nickname}}: {{message.message}}
+			</div>
+		</div>
+	</div>
 
-   <div class="input-group">
-      <input type="text" class="form-control" ng-model="nextMessage" ng-enter="sendChatMessage()">
+	<div class="input-group">
+		<input type="text" class="form-control" ng-model="nextMessage" ng-enter="sendChatMessage()">
       <span class="input-group-btn">
          <button class="send-button btn btn-default" type="button" ng-click="sendChatMessage()">
-            <span class="glyphicon glyphicon-send"></span>
-         </button>
+				<span class="glyphicon glyphicon-send"></span>
+			</button>
       </span>
-   </div>
+	</div>
 </div>
