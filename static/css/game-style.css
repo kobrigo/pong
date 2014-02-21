@@ -167,3 +167,13 @@
 	background: cornflowerblue;
 	color: white;
 }
+
+.left-player-nickname {
+	float: left;
+	color:white;
+}
+
+.right-player-nickname {
+	float: right;
+	color:white;
+}

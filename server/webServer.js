@@ -8,13 +8,18 @@
 var express = require('express');
 var path = require('path');
 var socketIo = require('socket.io');
+var PongGame = require('./game');
+var Player = require('./player');
 var _ = require('lodash-node');
 
 var consts = {
-	webServerPort: 9022
+	webServerPort: 80,
+	timeoutToEnterTheGameScreen: 30000
 };
 
 var pathToServe = path.normalize(path.join(__dirname, './../static/'));
+var phaserPath = path.normalize(path.join(__dirname, './../../phaser/'));
+
 var appWS = express();
 var server = require('http').createServer(appWS);
 var io = socketIo.listen(server);
@@ -24,18 +29,16 @@ appWS.use(function(req, res, next) {
 	next();
 });
 appWS.use("/", express.static(pathToServe));
+appWS.use("/", express.static(phaserPath));
 server.listen(consts.webServerPort);
 
 var chatMessageId = 0;
-
-function Player(socket, nickname) {
-	this.socket = socket;
-	this.nickname = nickname;
-}
-
-function Game(settings) {
-	this.settings = settings;
-}
+/**
+ * This counter will be used to create a unique room number for two players to play with one another.
+ * @type {number}
+ */
+var gameRooomId = 0;
+var games = {};
 
 function getAllPlayersData() {
 	var playersData = [];
@@ -56,7 +59,7 @@ io.sockets.on('connection', function(socket) {
 		socket.player = player;
 
 		//Check for the nick name on all the sockets connected
-		var allClients = io.sockets.clients();
+		var allClients = io.sockets.clients('lobby');
 		for (var i = 0, length = allClients.length; i < length; i++) {
 			var currentSocket = allClients[i];
 			if ((currentSocket !== socket) && //skip ourselves in the list of all sockets
@@ -116,22 +119,57 @@ io.sockets.on('connection', function(socket) {
 		chatMessageId++;
 	});
 
-	socket.on('start-game', function(data) {
-		//TODO:
-		//1. find the player that we want to play with
-		//2. find the the socket this message has come from
-		//3. remove them from the hash of players in the lobby
-		//4. Create a game instance with these tow players.
-		//5. Add the Game instance to the active list of games that will be shown in the lobby.
+	/**
+	 * {string} data.opposedPlayerNickname the nickname of the player that this player has asked to play with
+	 */
+	socket.on('request-to-play', function(data) {
+		//TODO: just as a percussion check that the client did not hack the code and trying to play against itself
+		//find the player that this player wants to play with.
+		var socketOfPlayerToPlayWith = _.find(io.sockets.clients('lobby'), function(currentSocket) {
+			return currentSocket.player.nickname === data.opposedPlayerNickname;
+		});
+
+		if (_.isEmpty(socketOfPlayerToPlayWith)) {
+			socket.emit('request-to-play-error', 'could not find the player ' + data.opposedPlayerNickname + ' you asked to play with in the lobby');
+		}
+		// remove it from the lobby
+		socketOfPlayerToPlayWith.leave('lobby');
+		socket.leave('lobby');
+		//create a game room for them to play with one another.
+		++gameRooomId;
+		var gameId = 'game' + gameRooomId;
+		socket.join(gameId);
+		socketOfPlayerToPlayWith.join(gameId);
+
+		//Create a game instance with these tow players.
+		var game = new PongGame({
+			io:io,
+			initiatorPlayer: socket.player,
+			opposedPlayer: socketOfPlayerToPlayWith.player,
+			id: gameId
+		});
+
+		//Add the Game instance to the active list of games that will be shown in the lobby.
+		games[gameId] = game;
+
+		//send a message to the players and wait for them to enter the game screen.
+		io.sockets.in(gameId).emit("request-to-play-ok");
+
+		//set a timeout of 30 seconds if both them did not enter the room by then pop them out of the game back to the lobby
+		setTimeout(function() {
+			if (game.playersInTheGameScreen < 2) {
+				//throw them back to the lobby and destroy the game
+				game.destroy();
+				delete games.gameId;
+			}
+		}, consts.timeoutToEnterTheGameScreen);
+
+		console.log(game.initiatorPlayer.nickname + 'and ' + game.opposedPlayer.nickname + 'entered game room:' + game.id);
+		//TODO add the active list of games in the lobby in the client side.
 	});
 
 	socket.on('client-message', function(data) {
 		console.log(data);
 	});
 
-	//   //just brodcast every 1 second for now.
-	//   setInterval(function() {
-	//      socket.emit('news', { theNews: 'this is the news' });
-	//
-	//   }, 1000);
 });

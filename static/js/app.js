@@ -18,8 +18,7 @@ appModule.config(['$routeProvider', function($routeProvider) {
 
 appModule.run(['game-console-service', '$rootScope', 'socket', function(gameConsole, $rootscope, appSocket) {
 
-//   appSocket.on('news', function(data) {
-//      gameConsole.log(data.theNews);
-//      appSocket.emit('client-message', {data: 'this is eyals data'});
-//   });
+   appSocket.on('disconnect', function(data) {
+      gameConsole.log("Server Disconnected");
+   });
 }]);

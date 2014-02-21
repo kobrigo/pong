@@ -60,33 +60,36 @@ commonModule.factory('game-console-service', function() {
 	return new GameConsoleService();
 });
 
-commonModule.factory('socket', ['commonConsts', '$rootScope', '$location', 'game-console-service', function(commonConsts, $rootScope, $location, gameConsole) {
-	var host = $location.host();
-	var socket = io.connect("http://" + host);
-	return {
-		on: function(eventName, callback) {
-			socket.on(eventName, function() {
-				var args = arguments;
-				$rootScope.$apply(function() {
-					callback.apply(socket, args);
-				});
-			});
-		},
-		off: function(eventName, callback) {
-			socket.removeListener(eventName, callback);
-		},
-		emit: function(eventName, data, callback) {
-			socket.emit(eventName, data, function() {
-				var args = arguments;
-				$rootScope.$apply(function() {
-					if (callback) {
+commonModule.factory('socket', ['commonConsts', '$rootScope', '$location', 'game-console-service',
+	function(commonConsts, $rootScope, $location, gameConsole) {
+		var host = $location.host();
+		var socket = io.connect("http://" + host, {
+			reconnect: false //disable the socket from auto reconnecting to prevent the errors due to state getting out of sync server and client
+		});
+		return {
+			on: function(eventName, callback) {
+				socket.on(eventName, function() {
+					var args = arguments;
+					$rootScope.$apply(function() {
 						callback.apply(socket, args);
-					}
+					});
 				});
-			})
-		}
-	};
-}]);
+			},
+			off: function(eventName, callback) {
+				socket.removeListener(eventName, callback);
+			},
+			emit: function(eventName, data, callback) {
+				socket.emit(eventName, data, function() {
+					var args = arguments;
+					$rootScope.$apply(function() {
+						if (callback) {
+							callback.apply(socket, args);
+						}
+					});
+				})
+			}
+		};
+	}]);
 
 
 // This directive allows you to handle the pressing of enter on an element when it is in focus
